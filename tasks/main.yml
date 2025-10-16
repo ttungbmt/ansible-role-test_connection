@@ -9,7 +9,7 @@
 
 - name: Check if the ssh tcp port is open
   block:
-    - name: Wait for tcp port 22
+    - name: Wait for tcp port {{ ansible_ssh_port | 22 }}
       ansible.builtin.wait_for:
         port: "{{ ansible_ssh_port | 22 }}"
         host: "{{ ansible_ssh_host | default(ansible_host | default(inventory_hostname)) }}"
@@ -17,7 +17,7 @@
         timeout: "{{ test_connection_timeout }}"
       delegate_to: "{{ test_connection_report_host }}"
 
-    - name: Save success results port 22
+    - name: Save success results port {{ ansible_ssh_port | 22 }}
       ansible.builtin.lineinfile:
         path: "{{ test_connection_report_directory }}/connection_succeeded.txt"
         line: "{{ ansible_ssh_host | default(ansible_host | default(inventory_hostname)) }}"
@@ -25,7 +25,7 @@
         mode: "0644"
       delegate_to: "{{ test_connection_report_host }}"
   rescue:
-    - name: Save failed results port 22
+    - name: Save failed results port {{ ansible_ssh_port | 22 }}
       ansible.builtin.lineinfile:
         path: "{{ test_connection_report_directory }}/connection_failed.txt"
         line: "{{ ansible_ssh_host | default(ansible_host | default(inventory_hostname)) }}"
